@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: jenkis-cicd-pv-app
+
+spec:
+  selector:
+    app: jenkis-cicd-pv-app
+
+  ports:
+    - port: 80
+      targetPort: 8080
+
+  type: NodePort

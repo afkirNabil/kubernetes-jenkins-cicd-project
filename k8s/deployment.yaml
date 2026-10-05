@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-cicd-pv-app
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: jenkis-cicd-pv-app
+
+  template:
+    metadata:
+      labels:
+        app: jenkis-cicd-pv-app
+
+    spec:
+      containers:
+        - name: jenkis-cicd-pv-app
+          image: nabilas/jenkis-cicd-pv-app:v1
+
+          ports:
+            - containerPort: 8080
