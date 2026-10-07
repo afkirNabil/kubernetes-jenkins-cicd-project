@@ -16,7 +16,7 @@ spec:
       args:
         - 99d
 
-    - name: kanikoi
+    - name: kaniko
       image: ghcr.io/osscontainertools/kaniko:debug
       command:
         - /busybox/cat
