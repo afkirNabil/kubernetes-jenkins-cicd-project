@@ -16,18 +16,17 @@ spec:
       args:
         - 99d
 
-    - name: kaniko
+    - name: kanikoi
       image: ghcr.io/osscontainertools/kaniko:debug
       command:
         - /busybox/cat
       tty: true
 
     - name: kubectl
-      image: bitnami/kubectl:latest
+      image: alpine/k8s:1.34.1
       command:
-        - sleep
-      args:
-        - 99d
+        - cat
+      tty: true
 '''
         }
     }
@@ -91,12 +90,12 @@ EOF
                 container('kubectl') {
                     sh '''
                         kubectl set image \
-                          deployment/jenkis-cicd-pv-app \
+                          deployment/jenkins-cicd-pv-app \
                           jenkis-cicd-pv-app=$IMAGE_NAME:$BUILD_NUMBER \
                           -n default
 
                         kubectl rollout status \
-                          deployment/jenkis-cicd-pv-app \
+                          deployment/jenkins-cicd-pv-app \
                           -n default
                     '''
                 }
