@@ -17,9 +17,9 @@ spec:
         - 99d
 
     - name: kaniko
-      image: ghcr.io/osscontainertools/kaniko:latest
+      image: ghcr.io/osscontainertools/kaniko:debug
       command:
-        - /bin/cat
+        - /busybox/cat
       tty: true
 
     - name: kubectl
