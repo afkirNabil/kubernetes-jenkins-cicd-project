@@ -7,6 +7,8 @@ apiVersion: v1
 kind: Pod
 
 spec:
+  serviceAccountName: jenkins
+
   containers:
 
     - name: python
