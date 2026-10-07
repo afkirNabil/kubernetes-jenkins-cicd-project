@@ -19,9 +19,8 @@ spec:
     - name: kaniko
       image: ghcr.io/osscontainertools/kaniko:latest
       command:
-        - sleep
-      args:
-        - 99d
+        - /bin/cat
+      tty: true
 
     - name: kubectl
       image: bitnami/kubectl:latest
