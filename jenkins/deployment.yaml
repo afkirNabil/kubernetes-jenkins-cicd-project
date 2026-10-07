@@ -38,7 +38,7 @@ spec:
 
       containers:
         - name: jenkins
-          image: jenkins-kubectl:v1
+          image: jenkins-kubectl:v2
           imagePullPolicy: Never
 
           ports:

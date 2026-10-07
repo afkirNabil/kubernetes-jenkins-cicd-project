@@ -6,6 +6,8 @@ rules:
   - apiGroups: [""]
     resources:
       - pods
+      - pods/exec
+      - pods/log
       - services
       - configmaps
     verbs:

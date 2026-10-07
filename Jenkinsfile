@@ -16,8 +16,25 @@ spec:
       args:
         - 99d
 
+    - name: kaniko
+      image: ghcr.io/osscontainertools/kaniko:latest
+      command:
+        - sleep
+      args:
+        - 99d
+
+    - name: kubectl
+      image: bitnami/kubectl:latest
+      command:
+        - sleep
+      args:
+        - 99d
 '''
         }
+    }
+
+    environment {
+        IMAGE_NAME = 'nabilas/jenkis-cicd-pv-app'
     }
 
     stages {
@@ -26,7 +43,6 @@ spec:
             steps {
                 container('python') {
                     sh '''
-                        python --version
                         pip install -r requirements.txt
                         python -m py_compile app.py
                     '''
@@ -34,5 +50,58 @@ spec:
             }
         }
 
+        stage('Build and Push') {
+            steps {
+                container('kaniko') {
+
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'dockerhub-creds',
+                            usernameVariable: 'DOCKER_USER',
+                            passwordVariable: 'DOCKER_TOKEN'
+                        )
+                    ]) {
+
+                        sh '''
+                            mkdir -p /kaniko/.docker
+
+                            AUTH=$(printf "%s:%s" "$DOCKER_USER" "$DOCKER_TOKEN" | base64 | tr -d '\\n')
+
+                            cat > /kaniko/.docker/config.json <<EOF
+{
+  "auths": {
+    "https://index.docker.io/v1/": {
+      "auth": "$AUTH"
+    }
+  }
+}
+EOF
+
+                            /kaniko/executor \
+                                --context "$WORKSPACE" \
+                                --dockerfile "$WORKSPACE/Dockerfile" \
+                                --destination "$IMAGE_NAME:$BUILD_NUMBER"
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                container('kubectl') {
+                    sh '''
+                        kubectl set image \
+                          deployment/jenkis-cicd-pv-app \
+                          jenkis-cicd-pv-app=$IMAGE_NAME:$BUILD_NUMBER \
+                          -n default
+
+                        kubectl rollout status \
+                          deployment/jenkis-cicd-pv-app \
+                          -n default
+                    '''
+                }
+            }
+        }
     }
 }
